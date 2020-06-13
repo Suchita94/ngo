@@ -13,7 +13,8 @@ def main():
         total = link_dict[state]['total']
         max_page = (math.ceil(int(total)/100) + 1)
         for i in range(1, max_page):
-            content = requests.get('https://ngodarpan.gov.in/index.php/home/statewise_ngo/7079/19/{}?per_page=100'.format(i))
+            content = requests.get(link.format(i))
+            print(link.format(i))
             issue_count_dict.update(parse_html(content))
         state_count_dict[state] = issue_count_dict
     print(state_count_dict)
@@ -34,7 +35,7 @@ def get_all_links():
         href = link.get('href')
         href = href.split('/')
         href.pop()
-        href = '/'.join(href) + '{}/per_page=100'
+        href = '/'.join(href) + '/{}?per_page=100'
         link_dict[key] = {'link': href, 'total': total}
     return link_dict
 
@@ -47,6 +48,7 @@ def parse_html(content):
     rows = table.findAll('tr')
     
     for row in rows:
+        # print(row)
         issue_list = row.findAll('td')[4].string.split(',')
         for issue in issue_list:
             if issue not in issue_count_dict:
